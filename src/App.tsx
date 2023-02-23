@@ -10,9 +10,6 @@ const App = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           ACME Package Registry
         </Typography>
-        <Typography variant="h4" component="h1" gutterBottom>
-          My girlfriend is awesome
-        </Typography>
       </Box>
     </Container>
   );
