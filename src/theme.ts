@@ -5,10 +5,16 @@ import { red } from '@mui/material/colors';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#556cd6',
+      light: '#4fb3be',
+      main: '#00838e',
+      dark: '#005661',
+      contrastText: '#fff',
     },
     secondary: {
-      main: '#19857b',
+      light: '#636871',
+      main: '#393e46',
+      dark: '#13181f',
+      contrastText: '#fff',
     },
     error: {
       main: red.A400,
