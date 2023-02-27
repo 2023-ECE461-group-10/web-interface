@@ -6,12 +6,12 @@ import { Button } from '@mui/material';
 import TitleBar from './components/TitleBar';
 
 const App = () => {
-  return (
-    <>
-    <TitleBar/>
-    {/* app content goes here */}
-    </>
-  );
+    return (
+        <>
+            <TitleBar />
+            {/* app content goes here */}
+        </>
+    );
 }
 
 export default App;

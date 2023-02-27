@@ -17,7 +17,7 @@ const theme = createTheme({
       contrastText: '#fff',
     },
     error: {
-      main: red.A400,
+        main: red.A400,
     },
   },
 });
