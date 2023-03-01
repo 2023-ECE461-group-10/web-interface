@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const TitleBar = () => {
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{flexGrow: 1}}>
             <AppBar position="static">
                 <Toolbar>
                     <IconButton
@@ -17,10 +17,10 @@ const TitleBar = () => {
                         edge="start"
                         color="inherit"
                         aria-label="menu"
-                        sx={{ mr: 2 }}>
+                        sx={{mr: 2}}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         ACME Package Registry
                     </Typography>
                     <Button color="inherit">Login</Button>
@@ -28,6 +28,6 @@ const TitleBar = () => {
             </AppBar>
         </Box>
     );
-}
+};
 
 export default TitleBar;

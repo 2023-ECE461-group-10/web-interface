@@ -15,14 +15,15 @@
     "plugins": [
         "react"
     ],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
     "rules": {
         "indent": [
             "error",
             4
-        ],
-        "comma-dangle": [
-            "error",
-            "always-multiline"
         ]
     }
 }
