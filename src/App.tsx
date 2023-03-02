@@ -1,22 +1,31 @@
 import * as React from 'react';
-import LandingPage from './components/LandingPage';
-import SignIn from './components/SignIn';
+import UnauthedPage from './components/UnauthedPage';
 import TitleBar from './components/TitleBar';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from './theme';
+import Button from '@mui/material/Button/Button';
 
 const App = () => {
     const [isSignedIn, setIsSignedIn] = React.useState(false);
 
+    // check if there is a valid auth token in local storage
+    React.useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsSignedIn(true);
+        }
+    }, []);
+
+    const handleSignOut = () => {
+        localStorage.removeItem('token');
+        setIsSignedIn(false);
+    };
+
     return (
         <>
-            <ThemeProvider theme={theme}>
-                <TitleBar />
-                {isSignedIn ?
-                    <div>Logged in</div> :
-                    <LandingPage />
-                }
-            </ThemeProvider>
+            <TitleBar />
+            {isSignedIn ?
+                <Button variant='contained' onClick={handleSignOut}> sign out </Button> :
+                <UnauthedPage />
+            }
         </>
     );
 };
