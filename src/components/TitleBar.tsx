@@ -6,24 +6,50 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import Popover from '@mui/material/Popover';
+import SignIn from './SignIn';
 
 const TitleBar = () => {
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+    const handleLoginClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'login-popover' : undefined;
+
+
     return (
-        <Box sx={{flexGrow: 1}}>
+        <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton
+                    {/* <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
                         aria-label="menu"
-                        sx={{mr: 2}}>
+                        sx={{ mr: 2 }}>
                         <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                    </IconButton> */}
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         ACME Package Registry
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    <Button onClick={handleLoginClick} color="inherit">Login</Button>
+                    <Popover
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }} >
+                        <SignIn />
+                    </Popover>
                 </Toolbar>
             </AppBar>
         </Box>
