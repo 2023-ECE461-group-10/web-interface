@@ -1,17 +1,33 @@
 import * as React from 'react';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import { Button } from '@mui/material';
+import UnauthedPage from './components/UnauthedPage';
 import TitleBar from './components/TitleBar';
+import Button from '@mui/material/Button/Button';
 
 const App = () => {
-  return (
-    <>
-    <TitleBar/>
-    {/* app content goes here */}
-    </>
-  );
-}
+    const [isSignedIn, setIsSignedIn] = React.useState(false);
+
+    // check if there is a valid auth token in local storage
+    React.useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsSignedIn(true);
+        }
+    }, []);
+
+    const handleSignOut = () => {
+        localStorage.removeItem('token');
+        setIsSignedIn(false);
+    };
+
+    return (
+        <>
+            <TitleBar />
+            {isSignedIn ?
+                <Button variant='contained' onClick={handleSignOut}> sign out </Button> :
+                <UnauthedPage />
+            }
+        </>
+    );
+};
 
 export default App;
