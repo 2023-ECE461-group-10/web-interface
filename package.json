@@ -9,6 +9,7 @@
     "@mui/material": "^5.11.10",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "axios": "^1.3.4",
     "react": "latest",
     "react-dom": "latest",
     "react-scripts": "latest"
