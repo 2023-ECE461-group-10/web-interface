@@ -23,7 +23,6 @@ const App = () => {
     return (
         <>
             <TitleBar />
-            
             <PackageList />
             {/* {isSignedIn ?
                 <Button variant='contained' onClick={handleSignOut}> sign out </Button> :
