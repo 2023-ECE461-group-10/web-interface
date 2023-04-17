@@ -8,6 +8,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Popover from '@mui/material/Popover';
 import SignIn from './SignIn';
+import { styled } from '@mui/material/styles';
+
+const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 const TitleBar = () => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -26,7 +29,7 @@ const TitleBar = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position="fixed">
                 <Toolbar>
                     {/* <IconButton
                         size="large"
@@ -52,6 +55,7 @@ const TitleBar = () => {
                     </Popover>
                 </Toolbar>
             </AppBar>
+            <Offset />
         </Box>
     );
 };

@@ -2,6 +2,7 @@ import * as React from 'react';
 import UnauthedPage from './components/UnauthedPage';
 import TitleBar from './components/TitleBar';
 import Button from '@mui/material/Button/Button';
+import PackageList from './components/PackageList';
 
 const App = () => {
     const [isSignedIn, setIsSignedIn] = React.useState(false);
@@ -22,10 +23,11 @@ const App = () => {
     return (
         <>
             <TitleBar />
-            {isSignedIn ?
+            <PackageList />
+            {/* {isSignedIn ?
                 <Button variant='contained' onClick={handleSignOut}> sign out </Button> :
                 <UnauthedPage />
-            }
+            } */}
         </>
     );
 };
