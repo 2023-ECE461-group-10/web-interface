@@ -6,11 +6,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-const ConfirmationDialog = () => {
-    const [open, setOpen] = React.useState(false);
+const ConfirmationDialog = ({ open, setOpen, confirmAction }: any) => {
 
     const handleClickOpen = () => {
         setOpen(true);
+    };
+
+    const handleAgree = () => {
+        confirmAction();
+        handleClose();
     };
 
     const handleClose = () => {
@@ -18,33 +22,27 @@ const ConfirmationDialog = () => {
     };
 
     return (
-        <div>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Open alert dialog
-            </Button>
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {"Use Google's location service?"}
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Disagree</Button>
-                    <Button onClick={handleClose} autoFocus>
-                        Agree
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
+        <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                System Reset
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    Are you sure you want to reset the entire system?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button color='error' variant='contained' onClick={handleClose} autoFocus>Disagree</Button>
+                <Button onClick={handleAgree}>
+                    Agree
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 }
 

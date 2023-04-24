@@ -6,6 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { TextField } from '@mui/material';
+import { uploadFile } from '../api/apiCalls';
 
 const FileUpload = () => {
 
@@ -22,19 +23,16 @@ const FileUpload = () => {
         setPackageName(event.target.value);
     };
 
-    const handleUpload = () => {
+    const handleUpload = async () => {
         console.log(file);
         if (file && packageName !== '') {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            axios.post('/api/upload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }).then((response) => {
-                console.log(response);
-            });
+            try {
+                await uploadFile(file);
+                // open success snackbar
+            } catch (error) {
+                console.log(error, 'error uploading file');
+                // open error snackbar
+            }
         }
     }
 

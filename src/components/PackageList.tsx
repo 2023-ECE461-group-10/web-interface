@@ -10,7 +10,7 @@ import { Box, TextField, InputAdornment, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FileUpload from './FileUpload';
 import { resetDatabase } from '../api/apiCalls';
-import axios from 'axios';
+import ConfirmationDialog from './ConfirmationDialog';
 
 // URL NET_SCORE RAMP_UP_SCORE CORRECTNESS_SCORE BUS_FACTOR_SCORE RESPONSIVE_MAINTAINER_SCORE PINNING_FRACTION PR_FRACTION LICENSE_SCORE
 
@@ -57,15 +57,23 @@ const rows = [
 
 export default function PackageList() {
     const [filteredRows, setFilteredRows] = React.useState(rows);
+    const [open, setOpen] = React.useState(false);
 
     const filterRows = (rows: any, filter: string) => {
         const filteredRows = rows.filter((row: any) => row.name.toLowerCase().includes(filter.toLowerCase()));
         setFilteredRows(filteredRows);
     }
 
-    const handleSystemReset = () => { // calls reset function in App.tsx
+    const handleSystemReset = async () => { // calls reset function in App.tsx
         // trigger confirmation dialog
-        resetDatabase();
+        console.log('resetting database');
+        try {
+            await resetDatabase();
+            // open success snackbar
+        } catch (error) {
+            console.log(error, 'error resetting database');
+            // open error snackbar
+        }
     };
 
     return (
@@ -133,10 +141,11 @@ export default function PackageList() {
                     sx={{ marginTop: '1em', alignSelf: 'center' }}
                     variant='outlined'
                     color='error'
-                    onClick={handleSystemReset}>
+                    onClick={() => setOpen(true)}>
                     Reset to default System State
                 </Button>
             </Box>
+            <ConfirmationDialog open={open} setOpen={setOpen} confirmAction={handleSystemReset} />
         </Box>
 
     );
