@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
 // takes isSignedIn, setIsSignedIn props
-const SignIn = ({ isSignedIn, setIsSignedIn }: any): JSX.Element => {
+const SignIn = ({ isSignedIn, setIsSignedIn, handleClose }: any): JSX.Element => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -23,6 +23,7 @@ const SignIn = ({ isSignedIn, setIsSignedIn }: any): JSX.Element => {
         // put dummy token in local storage
         localStorage.setItem('token', '1234');
         setIsSignedIn(true);
+        handleClose();
     };
 
     return (

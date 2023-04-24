@@ -14,27 +14,15 @@ const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 const TitleBar = ({ isSignedIn, setIsSignedIn }: any) => {
 
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [open, setOpen] = React.useState(false);
 
-    // if isSignedIn is true, then open is false and the popover is closed
-
-    React.useEffect(() => {
-        setOpen(isSignedIn ?? false);
-    }, [isSignedIn]);
-
-
-    const handleLoginClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+    const handleLoginClick = () => {
         setOpen(true);
     };
 
     const handleClose = () => {
-        setAnchorEl(null);
         setOpen(false);
     };
-
-    const id = open ? 'login-popover' : undefined;
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -51,20 +39,16 @@ const TitleBar = ({ isSignedIn, setIsSignedIn }: any) => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         ACME Package Registry
                     </Typography>
-                    {isSignedIn ||
-                        <><Button onClick={handleLoginClick} color="inherit">Login</Button>
-                            <Popover
-                                open={open}
-                                anchorEl={anchorEl}
-                                onClose={handleClose}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }} >
-                                <SignIn isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
-                            </Popover>
-                        </>
-                    }
+                    <Button onClick={handleLoginClick} disabled={isSignedIn} color="inherit">Login</Button>
+                    <Popover
+                        open={open}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }} >
+                        <SignIn isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} handleClose={handleClose} />
+                    </Popover>
                 </Toolbar>
             </AppBar>
             <Offset />
