@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
 // takes isSignedIn, setIsSignedIn props
-const SignIn = ({ isSignedIn, setIsSignedIn, handleClose }: any): JSX.Element => {
+const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
-const TitleBar = ({ isSignedIn, setIsSignedIn }: any) => {
+const TitleBar = ({ isSignedIn, setIsSignedIn, handleSignOut }: any) => {
 
     const [open, setOpen] = React.useState(false);
 
@@ -39,7 +39,10 @@ const TitleBar = ({ isSignedIn, setIsSignedIn }: any) => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         ACME Package Registry
                     </Typography>
-                    <Button onClick={handleLoginClick} disabled={isSignedIn} color="inherit">Login</Button>
+                    {isSignedIn ?
+                        <Button onClick={handleSignOut} color="inherit"> sign out </Button> :
+                        <Button onClick={handleLoginClick} color="inherit">Sign in</Button>
+                    }
                     <Popover
                         open={open}
                         onClose={handleClose}
@@ -47,7 +50,7 @@ const TitleBar = ({ isSignedIn, setIsSignedIn }: any) => {
                             vertical: 'top',
                             horizontal: 'right',
                         }} >
-                        <SignIn isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} handleClose={handleClose} />
+                        <SignIn setIsSignedIn={setIsSignedIn} handleClose={handleClose} />
                     </Popover>
                 </Toolbar>
             </AppBar>

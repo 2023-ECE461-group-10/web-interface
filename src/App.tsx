@@ -3,6 +3,9 @@ import UnauthedPage from './components/UnauthedPage';
 import TitleBar from './components/TitleBar';
 import Button from '@mui/material/Button/Button';
 import PackageList from './components/PackageList';
+import FileUpload from './components/FileUpload';
+import FileDownload from './components/FileDownload';
+import { Box } from '@mui/material';
 
 const App = () => {
     const [isSignedIn, setIsSignedIn] = React.useState(false);
@@ -21,16 +24,15 @@ const App = () => {
     };
 
     return (
-        <>
-            <TitleBar isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
+        <Box>
+            <TitleBar isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} handleSignOut={handleSignOut} />
             {isSignedIn ?
-                <>
+                <Box >
                     <PackageList /> :
-                    <Button variant='contained' onClick={handleSignOut}> sign out </Button>
-                </> :
+                </Box> :
                 <UnauthedPage />
             }
-        </>
+        </Box>
     );
 };
 

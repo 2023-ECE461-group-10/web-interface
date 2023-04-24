@@ -17,9 +17,6 @@ const UnauthedPage = () => {
                     alignItems: 'center',
                 }}>
                 <img src="/acme-logo.png" alt="ACME Logo" width={"300em"} />
-                {/* create a download link for the /acme-logo.png file */}
-                <FileUpload />
-                <FileDownload />
                 <Box sx={{ marginBottom: 12 }}>
                     <Typography component="h1" variant="h5">
                         Please Sign in To Continue
