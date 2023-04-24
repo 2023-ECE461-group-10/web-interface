@@ -22,12 +22,14 @@ const App = () => {
 
     return (
         <>
-            <TitleBar />
-            <PackageList />
-            {/* {isSignedIn ?
-                <Button variant='contained' onClick={handleSignOut}> sign out </Button> :
+            <TitleBar isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
+            {isSignedIn ?
+                <>
+                    <PackageList /> :
+                    <Button variant='contained' onClick={handleSignOut}> sign out </Button>
+                </> :
                 <UnauthedPage />
-            } */}
+            }
         </>
     );
 };

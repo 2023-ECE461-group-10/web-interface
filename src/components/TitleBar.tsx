@@ -12,20 +12,29 @@ import { styled } from '@mui/material/styles';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
-const TitleBar = () => {
+const TitleBar = ({ isSignedIn, setIsSignedIn }: any) => {
+
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const [open, setOpen] = React.useState(false);
+
+    // if isSignedIn is true, then open is false and the popover is closed
+
+    React.useEffect(() => {
+        setOpen(isSignedIn ?? false);
+    }, [isSignedIn]);
+
 
     const handleLoginClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
+        setOpen(true);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
+        setOpen(false);
     };
 
-    const open = Boolean(anchorEl);
     const id = open ? 'login-popover' : undefined;
-
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -42,17 +51,20 @@ const TitleBar = () => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         ACME Package Registry
                     </Typography>
-                    <Button onClick={handleLoginClick} color="inherit">Login</Button>
-                    <Popover
-                        open={open}
-                        anchorEl={anchorEl}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }} >
-                        <SignIn />
-                    </Popover>
+                    {isSignedIn ||
+                        <><Button onClick={handleLoginClick} color="inherit">Login</Button>
+                            <Popover
+                                open={open}
+                                anchorEl={anchorEl}
+                                onClose={handleClose}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }} >
+                                <SignIn isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
+                            </Popover>
+                        </>
+                    }
                 </Toolbar>
             </AppBar>
             <Offset />
