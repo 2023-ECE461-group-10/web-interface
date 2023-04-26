@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 //post request for file upload
-export const uploadFile = async (file: File) => {
+export const uploadFile = async (file: File, packageName: string) => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('packageName', packageName);
     return await axios.post('/api/v1/files', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',

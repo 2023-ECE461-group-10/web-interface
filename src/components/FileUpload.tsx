@@ -27,7 +27,7 @@ const FileUpload = () => {
         console.log(file);
         if (file && packageName !== '') {
             try {
-                await uploadFile(file);
+                await uploadFile(file, packageName);
                 // open success snackbar
             } catch (error) {
                 console.log(error, 'error uploading file');
