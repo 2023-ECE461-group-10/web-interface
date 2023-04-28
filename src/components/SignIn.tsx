@@ -7,8 +7,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
+// takes isSignedIn, setIsSignedIn props
+const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
 
-export default function SignIn() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -21,7 +22,8 @@ export default function SignIn() {
         // just do it for now
         // put dummy token in local storage
         localStorage.setItem('token', '1234');
-
+        setIsSignedIn(true);
+        handleClose();
     };
 
     return (
@@ -75,3 +77,5 @@ export default function SignIn() {
         </Container>
     );
 }
+
+export default SignIn;

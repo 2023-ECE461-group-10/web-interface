@@ -1,10 +1,11 @@
 import axios from 'axios';
 
 //post request for file upload
-export const uploadFile = (file: File) => {
+export const uploadFile = async (file: File, packageName: string) => {
     const formData = new FormData();
     formData.append('file', file);
-    return axios.post('/api/v1/files', formData, {
+    formData.append('packageName', packageName);
+    return await axios.post('/api/v1/files', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
@@ -12,10 +13,10 @@ export const uploadFile = (file: File) => {
 };
 
 //put request for file updating
-export const updateFile = (file: File) => {
+export const updateFile = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    return axios.put('/api/v1/files', formData, {
+    return await axios.put('/api/v1/files', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
@@ -23,30 +24,30 @@ export const updateFile = (file: File) => {
 }
 
 //delete request for file deletion
-export const deleteFile = (fileId: string) => {
-    return axios.delete(`/api/v1/files/${fileId}`);
+export const deleteFile = async (fileId: string) => {
+    return await axios.delete(`/api/v1/files/${fileId}`);
 }
 
 //get request for file download
-export const downloadFile = (fileId: string) => {
-    return axios.get(`/api/v1/files/${fileId}`, {
+export const downloadFile = async (fileId: string) => {
+    return await axios.get(`/api/v1/files/${fileId}`, {
         responseType: 'blob',
     });
 }
 
 //post request for package rating
-export const ratePackage = (packageId: string, rating: number) => {
-    return axios.post(`/api/v1/packages/${packageId}/rating`, {
+export const ratePackage = async (packageId: string, rating: number) => {
+    return await axios.post(`/api/v1/packages/${packageId}/rating`, {
         rating,
     });
 }
 
 //get request for all packages
-export const getPackages = () => {
-    return axios.get('/api/v1/packages');
+export const getPackages = async () => {
+    return await axios.get('/api/v1/packages');
 }
 
 //delete request to reset the database
-export const resetDatabase = () => {
-    return axios.delete('/api/v1/reset');
+export const resetDatabase = async () => {
+    return await axios.delete('/api/v1/reset');
 }

@@ -12,20 +12,17 @@ import { styled } from '@mui/material/styles';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
-const TitleBar = () => {
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+const TitleBar = ({ isSignedIn, setIsSignedIn, handleSignOut }: any) => {
 
-    const handleLoginClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+    const [open, setOpen] = React.useState(false);
+
+    const handleLoginClick = () => {
+        setOpen(true);
     };
 
     const handleClose = () => {
-        setAnchorEl(null);
+        setOpen(false);
     };
-
-    const open = Boolean(anchorEl);
-    const id = open ? 'login-popover' : undefined;
-
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -42,16 +39,18 @@ const TitleBar = () => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         ACME Package Registry
                     </Typography>
-                    <Button onClick={handleLoginClick} color="inherit">Login</Button>
+                    {isSignedIn ?
+                        <Button onClick={handleSignOut} color="inherit"> sign out </Button> :
+                        <Button onClick={handleLoginClick} color="inherit">Sign in</Button>
+                    }
                     <Popover
                         open={open}
-                        anchorEl={anchorEl}
                         onClose={handleClose}
                         anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
+                            vertical: 'top',
+                            horizontal: 'right',
                         }} >
-                        <SignIn />
+                        <SignIn setIsSignedIn={setIsSignedIn} handleClose={handleClose} />
                     </Popover>
                 </Toolbar>
             </AppBar>
