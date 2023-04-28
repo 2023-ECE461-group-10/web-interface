@@ -12,24 +12,41 @@ export const uploadFile = async (file: File, packageName: string) => {
     });
 };
 
+//post request for url upload
+export const uploadUrl = async (url: string, packageName: string) => {
+    return await axios.post('/api/v1/files', {
+        url,
+        packageName,
+    });
+};
+
 //put request for file updating
-export const updateFile = async (file: File) => {
+export const updateFile = async (file: File, packageName: string) => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('packageName', packageName);
     return await axios.put('/api/v1/files', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
     });
-}
+};
 
-//delete request for file deletion
-export const deleteFile = async (fileId: string) => {
+//put request for url updating
+export const updateUrl = async (url: string, packageName: string) => {
+    return await axios.put('/api/v1/files', {
+        url,
+        packageName,
+    });
+};
+
+//delete request for package deletion
+export const deletePackage = async (fileId: string) => {
     return await axios.delete(`/api/v1/files/${fileId}`);
 }
 
-//get request for file download
-export const downloadFile = async (fileId: string) => {
+//get request for package download
+export const downloadPackage = async (fileId: string) => {
     return await axios.get(`/api/v1/files/${fileId}`, {
         responseType: 'blob',
     });

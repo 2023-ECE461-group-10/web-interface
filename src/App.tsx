@@ -1,11 +1,13 @@
 import * as React from 'react';
 import UnauthedPage from './components/UnauthedPage';
 import TitleBar from './components/TitleBar';
-import Button from '@mui/material/Button/Button';
 import PackageList from './components/PackageList';
 import FileUpload from './components/FileUpload';
-import FileDownload from './components/FileDownload';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { Route, Routes } from 'react-router-dom';
+import FourZeroFour from './components/FourZeroFour';
+import HomePage from './components/HomePage';
+import ResetPage from './components/ResetPage';
 
 const App = () => {
     const [isSignedIn, setIsSignedIn] = React.useState(false);
@@ -26,12 +28,15 @@ const App = () => {
     return (
         <Box>
             <TitleBar isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} handleSignOut={handleSignOut} />
-            {isSignedIn ?
-                <Box >
-                    <PackageList /> :
-                </Box> :
-                <UnauthedPage />
-            }
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/packages" element={<PackageList />} />
+                <Route path="/upload" element={<FileUpload />} />
+                <Route path="/reset" element={<ResetPage />} />
+                <Route path="*" element={
+                    <FourZeroFour />
+                } />
+            </Routes>
         </Box>
     );
 };
