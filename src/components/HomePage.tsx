@@ -14,7 +14,7 @@ const HomePage = () => {
                 alignItems: 'center',
             }}>
             <Typography sx={{ padding: '1em', fontWeight: 'bold' }} variant="h1" color='primary'>
-                ACME
+                ACME test
             </Typography>
             <Button sx={{ margin: '0.5em', width: '15em' }} variant='contained' component={RouterLink} to='/packages'>
                 Packages
