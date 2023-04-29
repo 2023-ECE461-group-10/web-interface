@@ -1,14 +1,15 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { useNavigate } from "react-router-dom";
 
 // takes isSignedIn, setIsSignedIn props
 const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
+
+    const navigate = useNavigate();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -24,6 +25,7 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
         localStorage.setItem('token', '1234');
         setIsSignedIn(true);
         handleClose();
+        navigate('/');
     };
 
     return (
@@ -59,15 +61,12 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
                         id="password"
                         autoComplete="current-password"
                     />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
-                    />
                     <Button
                         color="primary"
                         type="submit"
                         fullWidth
                         variant="contained"
+
                         sx={{ mt: 3, mb: 2 }}
                     >
                         Sign In

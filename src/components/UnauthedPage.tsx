@@ -2,8 +2,6 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import FileUpload from './FileUpload';
-import FileDownload from './FileDownload';
 
 const UnauthedPage = () => {
 
@@ -16,7 +14,9 @@ const UnauthedPage = () => {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                <img src="/acme-logo.png" alt="ACME Logo" width={"300em"} />
+                <Typography sx={{ padding: '1em', fontWeight: 'bold' }} variant="h1" color='primary'>
+                    ACME
+                </Typography>
                 <Box sx={{ marginBottom: 12 }}>
                     <Typography component="h1" variant="h5">
                         Please Sign in To Continue

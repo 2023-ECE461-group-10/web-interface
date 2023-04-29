@@ -8,10 +8,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 const ConfirmationDialog = ({ open, setOpen, confirmAction }: any) => {
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
     const handleAgree = () => {
         confirmAction();
         handleClose();
@@ -37,8 +33,8 @@ const ConfirmationDialog = ({ open, setOpen, confirmAction }: any) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button color='error' variant='contained' onClick={handleClose} autoFocus>Disagree</Button>
-                <Button onClick={handleAgree}>
+                <Button variant='contained' onClick={handleClose} autoFocus>Disagree</Button>
+                <Button color='error' onClick={handleAgree}>
                     Agree
                 </Button>
             </DialogActions>
