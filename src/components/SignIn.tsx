@@ -4,9 +4,12 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { useNavigate } from "react-router-dom";
 
 // takes isSignedIn, setIsSignedIn props
 const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
+
+    const navigate = useNavigate();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -22,6 +25,7 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
         localStorage.setItem('token', '1234');
         setIsSignedIn(true);
         handleClose();
+        navigate('/');
     };
 
     return (
@@ -62,6 +66,7 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
                         type="submit"
                         fullWidth
                         variant="contained"
+
                         sx={{ mt: 3, mb: 2 }}
                     >
                         Sign In

@@ -8,6 +8,8 @@ import { Route, Routes } from 'react-router-dom';
 import FourZeroFour from './components/FourZeroFour';
 import HomePage from './components/HomePage';
 import ResetPage from './components/ResetPage';
+import PrivateRoute from './components/PrivateRoute';
+
 
 const App = () => {
     const [isSignedIn, setIsSignedIn] = React.useState(false);
@@ -29,10 +31,13 @@ const App = () => {
         <Box>
             <TitleBar isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} handleSignOut={handleSignOut} />
             <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/packages" element={<PackageList />} />
-                <Route path="/upload" element={<FileUpload />} />
-                <Route path="/reset" element={<ResetPage />} />
+                <Route path="/unauthed" element={<UnauthedPage />} />
+                <Route path="/" element={<PrivateRoute isSignedIn={isSignedIn} />}>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/packages" element={<PackageList />} />
+                    <Route path="/upload" element={<FileUpload />} />
+                    <Route path="/reset" element={<ResetPage />} />
+                </Route>
                 <Route path="*" element={
                     <FourZeroFour />
                 } />

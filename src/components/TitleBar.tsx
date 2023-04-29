@@ -14,7 +14,7 @@ const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 const TitleBar = ({ isSignedIn, setIsSignedIn, handleSignOut }: any) => {
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState<boolean>(false);
 
     const onResetPage = useMatch('/reset');
 
