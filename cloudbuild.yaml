@@ -1,5 +1,7 @@
 steps:
 - name: "gcr.io/cloud-builders/npm"
+  args: ["install", "react-scripts"]
+- name: "gcr.io/cloud-builders/npm"
   args: ["run", "build"]
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
