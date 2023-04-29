@@ -1,5 +1,22 @@
 import axios from 'axios';
 
+axios.defaults.baseURL = 'https://rest-api-ecoc6k2tbq-uc.a.run.app';
+// below is to deal with cors
+
+// put request for authentication
+export const authenticate = async (username: string, password: string) => {
+    return await axios.put('/authenticate', {
+        User: {
+            name: username,
+            isAdmin: true,
+        },
+        Secret: {
+            password,
+        }
+    });
+};
+
+
 //post request for file upload
 export const uploadFile = async (file: File, packageName: string) => {
     const formData = new FormData();

@@ -5,27 +5,35 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useNavigate } from "react-router-dom";
+import { authenticate } from '../api/apiCalls';
 
 // takes isSignedIn, setIsSignedIn props
 const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
 
     const navigate = useNavigate();
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-        // upon successful login put access token in local storage
 
-        // just do it for now
-        // put dummy token in local storage
-        localStorage.setItem('token', '1234');
-        setIsSignedIn(true);
-        handleClose();
-        navigate('/');
+        const username = data.get('username') as string;
+        const password = data.get('password') as string;
+
+        try {
+            // put request for authentication
+            const response = await authenticate(username, password);
+            console.log(response.data);
+            // upon successful login put access token in local storage
+            localStorage.setItem('token', response.data);
+            // token expires in 10 hours
+            localStorage.setItem('token-expiration', (Date.now() + 36000000).toString());
+            setIsSignedIn(true);
+            handleClose();
+            navigate('/');
+        } catch (error) {
+            console.log(error);
+        }
+
     };
 
     return (
@@ -43,18 +51,17 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
+                        required={true}
+                        fullWidth={true}
+                        id="username"
+                        label="Username"
+                        name="username"
                         autoFocus
                     />
                     <TextField
                         margin="normal"
-                        required
-                        fullWidth
+                        required={true}
+                        fullWidth={true}
                         name="password"
                         label="Password"
                         type="password"
