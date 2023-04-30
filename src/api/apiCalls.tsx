@@ -15,7 +15,6 @@ export const authenticate = async (username: string, password: string) => {
     });
 };
 
-
 //post request for file upload
 export const uploadFile = async (file: File) => {
 
@@ -105,5 +104,8 @@ export const getPackages = async () => {
 
 //delete request to reset the database
 export const resetDatabase = async () => {
-    return await axios.delete('/api/v1/reset');
+    const config = {
+        headers: { 'X-Authorization': localStorage.getItem('token') },
+    };
+    return await axios.delete('/reset', config);
 }

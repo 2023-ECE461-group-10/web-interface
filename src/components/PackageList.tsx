@@ -97,7 +97,7 @@ export default function PackageList() {
                 const plaintext = response.data.data.Content;
 
                 const byteCharacters = atob(plaintext);
-                
+
                 const byteNumbers = new Array(byteCharacters.length);
                 for (let i = 0; i < byteCharacters.length; i++) {
                     byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -119,11 +119,15 @@ export default function PackageList() {
 
                 document.body.removeChild(element);
             }
-            catch (error) {
+            catch (error: any) {
                 console.log(error);
-                snackbar.showMessage('Download Error');
+                if (error.message === 'Network Error') {
+                    snackbar.showMessage('Download Error, likely file is too large for GCP to handle (32mb limit)');
+                } else {
+                    snackbar.showMessage('Download Error');
+                }
+                setLoading(false);
             }
-            setLoading(false);
         }
         fetchData();
     }
@@ -346,6 +350,5 @@ export default function PackageList() {
                 </Table>
             </TableContainer> */}
         </Box>
-
     );
 }
