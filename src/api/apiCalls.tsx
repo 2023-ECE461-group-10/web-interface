@@ -76,9 +76,14 @@ export const ratePackage = async (packageId: string, rating: number) => {
     });
 }
 
-//get request for all packages
+//get request for all packages, with X-Authorization header
 export const getPackages = async () => {
-    return await axios.get('/api/v1/packages');
+    const body = JSON.stringify([{ Name: "*" }]);
+    const headers = {
+        'X-Authorization': localStorage.getItem('token'),
+        'Content-Type': 'application/json',
+    };
+    return await axios.post('/packages', body, { headers });
 }
 
 //delete request to reset the database

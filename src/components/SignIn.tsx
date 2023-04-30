@@ -6,10 +6,13 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useNavigate } from "react-router-dom";
 import { authenticate } from '../api/apiCalls';
+import { Backdrop } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import theme from '../theme';
 
 // takes isSignedIn, setIsSignedIn props
 const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
-
+    const [open, setOpen] = React.useState<boolean>(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -19,6 +22,8 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
         const username = data.get('username') as string;
         const password = data.get('password') as string;
 
+        // open backdrop
+        setOpen(true);
         try {
             // put request for authentication
             const response = await authenticate(username, password);
@@ -32,12 +37,16 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
             navigate('/');
         } catch (error) {
             console.log(error);
+            setOpen(false);
         }
-
+        // close backdrop
     };
 
     return (
         <Container component="main" maxWidth="xs">
+            <Backdrop open={open} sx={{ position: 'absolute', color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box
                 sx={{
                     marginTop: 4,
@@ -56,6 +65,7 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
                         id="username"
                         label="Username"
                         name="username"
+                        autoComplete='username'
                         autoFocus
                     />
                     <TextField
@@ -66,7 +76,7 @@ const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {
                         label="Password"
                         type="password"
                         id="password"
-                        autoComplete="current-password"
+                        autoComplete="password"
                     />
                     <Button
                         color="primary"
