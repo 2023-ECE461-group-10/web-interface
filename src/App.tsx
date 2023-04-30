@@ -4,7 +4,7 @@ import TitleBar from './components/TitleBar';
 import PackageList from './components/PackageList';
 import FileUpload from './components/FileUpload';
 import { Box, Button } from '@mui/material';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import FourZeroFour from './components/FourZeroFour';
 import HomePage from './components/HomePage';
 import ResetPage from './components/ResetPage';
@@ -14,7 +14,9 @@ import { useSnackbar } from 'material-ui-snackbar-provider'
 const App = () => {
     const [isSignedIn, setIsSignedIn] = React.useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
     const snackbar = useSnackbar();
+
 
     // check if there is a valid auth token in local storage
     React.useEffect(() => {
@@ -24,10 +26,11 @@ const App = () => {
         if (expiration && Date.now() > parseInt(expiration)) {
             handleSignOut();
         }
-        if (token) {
+        else if (token) {
             setIsSignedIn(true);
         }
-    }, []);
+        // console.log('location changed');
+    }, [location.pathname]);
 
     const handleSignOut = () => {
         localStorage.removeItem('token');

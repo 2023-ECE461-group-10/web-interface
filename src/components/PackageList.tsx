@@ -8,54 +8,11 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, TextField, InputAdornment, Typography, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { getPackages, getPackageRating, downloadPackage, deletePackage } from '../api/apiCalls';
+import { getPackages, getPackageRating, downloadPackage, deletePackage, updatePackage } from '../api/apiCalls';
 import theme from '../theme';
 import { Backdrop } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-
-// URL NET_SCORE RAMP_UP_SCORE CORRECTNESS_SCORE BUS_FACTOR_SCORE RESPONSIVE_MAINTAINER_SCORE PINNING_FRACTION PR_FRACTION LICENSE_SCORE
-
-function createData(
-    name: string,
-    version: string,
-    net_score: number,
-    ramp_up_score: number,
-    correctness_score: number,
-    bus_factor_score: number,
-    responsive_maintainer_score: number,
-    pinning_fraction: number,
-    pr_fraction: number,
-    license_score: number,
-    download_url: string,
-) {
-    return { name, version, net_score, ramp_up_score, correctness_score, bus_factor_score, responsive_maintainer_score, pinning_fraction, pr_fraction, license_score, download_url };
-}
-
-const downloadUrl = '/acme-logo.png';
-
-const rows = [
-    // createData('nodist', '1.2.3', 0.9, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('npm', '1.2.3', 0.8, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('yarn', '1.2.3', 0.7, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('browserify', '1.2.3', 0.6, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('webpack', '1.2.3', 0.5, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash1', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash2', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash3', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash4', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash5', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash6', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash7', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash8', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash9', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash10', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash11', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash12', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash13', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash14', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    // createData('lodash15', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-];
+import { useSnackbar } from 'material-ui-snackbar-provider'
 
 export default function PackageList() {
     const [rows, setRows] = React.useState<any[]>([]);
@@ -74,8 +31,10 @@ export default function PackageList() {
         pr_fraction?: number,
         license_score?: number,
     } | null>(null);
+    const [zipFile, setZipFile] = React.useState<File | null>(null);
 
     const [loading, setLoading] = React.useState<boolean>(false);
+    const snackbar = useSnackbar();
 
     const filterRows = (rows: any, filter: string) => {
         const filteredRows = rows.filter((row: any) => row.name.toLowerCase().includes(filter.toLowerCase()));
@@ -129,19 +88,93 @@ export default function PackageList() {
     }
 
     const handleDownload = () => {
-        console.log('download');
+        const fetchData = async () => {
+            if (!selectedRow?.id) return;
+            try {
+                setLoading(true);
+                const response = await downloadPackage(selectedRow?.id);
+                // console.log('response', response);
+                const plaintext = response.data.data.Content;
+
+                const byteCharacters = atob(plaintext);
+
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+
+                const byteArray = new Uint8Array(byteNumbers);
+
+                const blob = new Blob([byteArray], { type: 'application/zip' });
+
+                const url = window.URL.createObjectURL(blob);
+                const element = document.createElement('a');
+                element.href = url;
+                element.setAttribute('download', `${selectedRow?.name}-${selectedRow?.version}.zip`);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            }
+            catch (error: any) {
+                console.log(error);
+                if (error.message === 'Network Error') {
+                    snackbar.showMessage('Download Error, likely file is too large for GCP to handle (32mb limit)');
+                } else {
+                    snackbar.showMessage('Download Error');
+                }
+                setLoading(false);
+            }
+        }
+        fetchData();
     }
 
     const handleDelete = () => {
-        console.log('delete');
+        const fetchData = async () => {
+            if (!selectedRow?.id) return;
+            try {
+                setLoading(true);
+                await deletePackage(selectedRow?.id);
+                snackbar.showMessage('Package deleted');
+                // refresh page
+                window.location.reload();
+            } catch (error) {
+                snackbar.showMessage('Delete Error');
+                console.log(error);
+            }
+            setLoading(false);
+        }
+        fetchData();
     }
 
-    const handleUpdate = () => {
-        console.log('update');
+    const handleUpdate = async () => {
+        if (selectedRow?.name && selectedRow?.version && selectedRow?.id && selectedRow?.url) {
+            setLoading(true);
+            try {
+                await updatePackage(selectedRow?.name, selectedRow?.version, selectedRow?.id, selectedRow?.url);
+                snackbar.showMessage('Package updated');
+                // refresh page
+                window.location.reload();
+            } catch (error) {
+                snackbar.showMessage('Update Error');
+                console.log(error);
+            }
+            setLoading(false);
+        }
+        else {
+            console.log('required fields missing');
+            snackbar.showMessage('Required fields are missing');
+        }
     }
 
     return (
         <Box sx={{ padding: '1em', margin: '1em' }}>
+            <Backdrop sx={{ position: 'absolute', color: '#fff', zIndex: (theme) => theme.zIndex.drawer }} open={loading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -159,16 +192,13 @@ export default function PackageList() {
                         ),
                     }} />
             </Box>
-            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <TableContainer component={Paper} sx={{ width: '15.1em', maxHeight: 600, overflow: 'auto', border: 1, borderRadius: '0.5em', borderColor: theme.palette.primary.main }}>
-                    <Table sx={{ width: '15em' }} stickyHeader aria-label="simple table">
+                <TableContainer component={Paper} sx={{ width: '20.2em', maxHeight: 600, overflow: 'auto', border: 1, borderRadius: '0.5em', borderColor: theme.palette.primary.main }}>
+                    <Table sx={{ width: '20em' }} stickyHeader aria-label="simple table">
                         <TableHead>
                             <TableRow >
                                 <TableCell>Package</TableCell>
-                                <TableCell>ID</TableCell>
+                                <TableCell>Version</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -211,16 +241,17 @@ export default function PackageList() {
                                 <Typography variant="h6">
                                     {rows.find((row) => row.id === selectedRow.id)?.name} {rows.find((row) => row.id === selectedRow.id)?.version}
                                 </Typography>
-                                <Button variant='contained' sx={{ margin: '0.5em', width: '15em' }}>
+                                <Button variant='contained' sx={{ margin: '0.5em', width: '15em' }} onClick={handleDownload}>
                                     Download
                                 </Button>
-                                <Button variant='contained' color='error' sx={{ margin: '0.5em', width: '15em' }}>
+                                <Button variant='contained' color='error' sx={{ margin: '0.5em', width: '15em' }} onClick={handleDelete}>
                                     Delete
                                 </Button>
                                 <TextField
                                     margin="normal"
                                     sx={{ width: '20em' }}
                                     required={true}
+                                    error={selectedRow?.name === ''}
                                     label="Name"
                                     value={selectedRow?.name}
                                     onChange={(e) => setSelectedRow({ ...selectedRow, name: e.target.value })}
@@ -229,6 +260,7 @@ export default function PackageList() {
                                     margin="normal"
                                     sx={{ width: '20em' }}
                                     required={true}
+                                    error={selectedRow?.version === ''}
                                     label="Version"
                                     value={selectedRow?.version}
                                     onChange={(e) => setSelectedRow({ ...selectedRow, version: e.target.value })}
@@ -237,11 +269,12 @@ export default function PackageList() {
                                     margin="normal"
                                     sx={{ width: '20em' }}
                                     required={true}
+                                    error={selectedRow?.url === ''}
                                     label="URL"
                                     value={selectedRow?.url}
                                     onChange={(e) => setSelectedRow({ ...selectedRow, url: e.target.value })}
                                 />
-                                <Button variant='contained' sx={{ margin: '0.5em', width: '15em' }}>
+                                <Button variant='contained' sx={{ margin: '0.5em', width: '15em' }} onClick={handleUpdate}>
                                     Update
                                 </Button>
                                 <Typography variant='h6'>
@@ -317,6 +350,5 @@ export default function PackageList() {
                 </Table>
             </TableContainer> */}
         </Box>
-
     );
 }

@@ -8,13 +8,17 @@ import Typography from '@mui/material/Typography';
 import { TextField, FormGroup, FormControlLabel, Switch } from '@mui/material';
 import { uploadFile, uploadUrl } from '../api/apiCalls';
 import theme from '../theme';
+import { Backdrop } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useSnackbar } from 'material-ui-snackbar-provider'
 
 const FileUpload = () => {
 
     const [file, setFile] = React.useState<File | null>(null);
-    const [packageName, setPackageName] = React.useState<string>('');
     const [packageUrl, setPackageUrl] = React.useState<string>('');
     const [checked, setChecked] = React.useState<boolean>(false);
+    const [loading, setLoading] = React.useState<boolean>(false);
+    const snackbar = useSnackbar();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
@@ -25,10 +29,6 @@ const FileUpload = () => {
             setFile(event.target.files[0]);
         }
     }
-
-    const handlePackageNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPackageName(event.target.value);
-    };
 
     const handlePackageUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPackageUrl(event.target.value);
@@ -41,24 +41,48 @@ const FileUpload = () => {
             console.log('uploading file');
             // string zip should be in content
             try {
-                await uploadFile(file, packageName);
+                setLoading(true);
+                await uploadFile(file);
                 console.log('file uploaded');
-            } catch (error) {
-                console.log(error, 'error uploading file');
+                // clear form data
+                setPackageUrl('');
+                setFile(null);
+                // open success snack bar
+                snackbar.showMessage('File uploaded successfully');
+            } catch (error: any) {
+                // if 424 error, open snackbar with error message
+                if (error.response.status === 424) {
+                    snackbar.showMessage('Package failed metric score check');
+                } else {
+                    snackbar.showMessage('Server error uploading file');
+                }
             }
+            setLoading(false);
         } else {
             console.log('uploading url');
             //
             try {
-                await uploadUrl(packageUrl, packageName);
+                setLoading(true);
+                await uploadUrl(packageUrl);
                 console.log('url uploaded');
                 // clear form data
-                setPackageName('');
                 setPackageUrl('');
                 setFile(null);
-            } catch (error) {
-                console.log(error, 'error uploading url');
+                // open success snack bar
+                snackbar.showMessage('URL uploaded successfully');
+            } catch (error: any) {
+                console.log(error);
+                if (error.response?.status === 424) {
+                    snackbar.showMessage('Package failed metric score check');
+                } else if (error.response?.status === 409) {
+                    snackbar.showMessage('Package already exists');
+                } else if (error.message === 'Network Error') {
+                    snackbar.showMessage('Warning: Package may have been ingested, check package list');
+                } else {
+                    snackbar.showMessage('Server error ingesting URL, ensure URL is valid');
+                }
             }
+            setLoading(false);
         }
     }
 
@@ -68,6 +92,9 @@ const FileUpload = () => {
             flexDirection: 'row',
             justifyContent: 'center',
         }}>
+            <Backdrop sx={{ position: 'absolute', color: '#fff', zIndex: (theme) => theme.zIndex.drawer }} open={loading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -82,13 +109,6 @@ const FileUpload = () => {
                 <Typography variant="h6">
                     Upload a Package:
                 </Typography>
-                <TextField
-                    sx={{ margin: '1em' }}
-                    label="Package Name"
-                    variant="outlined"
-                    value={packageName}
-                    onChange={handlePackageNameChange}
-                />
                 <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                     <Typography variant="body1">
                         URL
@@ -136,7 +156,7 @@ const FileUpload = () => {
                         </Box>
                     </Box>
                 </Box>
-                <Button disabled={(packageName == '') || (!checked && packageUrl == '') || (checked && file === null)} variant='contained' onClick={handleUpload}>Submit</Button>
+                <Button disabled={(!checked && packageUrl == '') || (checked && file === null)} variant='contained' onClick={handleUpload}>Submit</Button>
             </Box >
         </Box>
     );
