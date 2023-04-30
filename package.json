@@ -10,6 +10,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "axios": "^1.3.4",
+    "material-ui-snackbar-provider": "^2.0.0",
     "react": "latest",
     "react-dom": "latest",
     "react-router-dom": "^6.11.0",

@@ -78,7 +78,6 @@ const FileUpload = () => {
                 padding: '0.5em',
                 borderRadius: '0.5em',
                 borderColor: theme.palette.primary.main,
-                bgcolor: '#fff',
             }} >
                 <Typography variant="h6">
                     Upload a Package:

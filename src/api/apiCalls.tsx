@@ -1,5 +1,22 @@
 import axios from 'axios';
 
+axios.defaults.baseURL = 'https://rest-api-ecoc6k2tbq-uc.a.run.app';
+// below is to deal with cors
+
+// put request for authentication
+export const authenticate = async (username: string, password: string) => {
+    return await axios.put('/authenticate', {
+        User: {
+            name: username,
+            isAdmin: true,
+        },
+        Secret: {
+            password,
+        }
+    });
+};
+
+
 //post request for file upload
 export const uploadFile = async (file: File, packageName: string) => {
     const formData = new FormData();
@@ -52,16 +69,24 @@ export const downloadPackage = async (fileId: string) => {
     });
 }
 
-//post request for package rating
-export const ratePackage = async (packageId: string, rating: number) => {
-    return await axios.post(`/api/v1/packages/${packageId}/rating`, {
-        rating,
-    });
+//get request for package rating
+export const getPackageRating = async (packageId: string) => {
+    const config = {
+        headers: {
+            'X-Authorization': localStorage.getItem('token'),
+        }
+    };
+    return await axios.get(`/package/${packageId}/rate`, config);
 }
 
-//get request for all packages
+//get request for all packages, with X-Authorization header
 export const getPackages = async () => {
-    return await axios.get('/api/v1/packages');
+    const body = JSON.stringify([{ Name: "*" }]);
+    const headers = {
+        'X-Authorization': localStorage.getItem('token'),
+        'Content-Type': 'application/json',
+    };
+    return await axios.post('/packages', body, { headers });
 }
 
 //delete request to reset the database

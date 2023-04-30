@@ -8,7 +8,6 @@ import Popover from '@mui/material/Popover';
 import SignIn from './SignIn';
 import { styled } from '@mui/material/styles';
 import { Link as RouterLink, useMatch } from 'react-router-dom';
-import theme from '../theme';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 

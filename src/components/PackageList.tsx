@@ -6,10 +6,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, TextField, InputAdornment, Button } from '@mui/material';
+import { Box, TextField, InputAdornment, Typography, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { resetDatabase } from '../api/apiCalls';
+import { getPackages, getPackageRating, downloadPackage, deletePackage } from '../api/apiCalls';
 import theme from '../theme';
+import { Backdrop } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // URL NET_SCORE RAMP_UP_SCORE CORRECTNESS_SCORE BUS_FACTOR_SCORE RESPONSIVE_MAINTAINER_SCORE PINNING_FRACTION PR_FRACTION LICENSE_SCORE
 
@@ -32,35 +34,110 @@ function createData(
 const downloadUrl = '/acme-logo.png';
 
 const rows = [
-    createData('nodist', '1.2.3', 0.9, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('npm', '1.2.3', 0.8, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('yarn', '1.2.3', 0.7, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('browserify', '1.2.3', 0.6, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('webpack', '1.2.3', 0.5, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash1', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash2', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash3', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash4', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash5', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash6', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash7', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash8', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash9', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash10', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash11', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash12', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash13', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash14', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
-    createData('lodash15', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('nodist', '1.2.3', 0.9, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('npm', '1.2.3', 0.8, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('yarn', '1.2.3', 0.7, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('browserify', '1.2.3', 0.6, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('webpack', '1.2.3', 0.5, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash1', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash2', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash3', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash4', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash5', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash6', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash7', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash8', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash9', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash10', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash11', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash12', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash13', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash14', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
+    // createData('lodash15', '1.2.3', 0.4, 0.5, 0.7, 0.3, 0.4, 0.5, 0.6, 1, downloadUrl),
 ];
 
 export default function PackageList() {
-    const [filteredRows, setFilteredRows] = React.useState(rows);
+    const [rows, setRows] = React.useState<any[]>([]);
+    const [filteredRows, setFilteredRows] = React.useState<any[]>(rows);
+    const [selectedRow, setSelectedRow] = React.useState<{
+        name: string,
+        id: number,
+        version: string,
+        url?: string,
+        net_score?: number,
+        ramp_up_score?: number,
+        correctness_score?: number,
+        bus_factor_score?: number,
+        responsive_maintainer_score?: number,
+        pinning_fraction?: number,
+        pr_fraction?: number,
+        license_score?: number,
+    } | null>(null);
+
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     const filterRows = (rows: any, filter: string) => {
         const filteredRows = rows.filter((row: any) => row.name.toLowerCase().includes(filter.toLowerCase()));
         setFilteredRows(filteredRows);
+    }
+
+    // fill rows with data from database (getPackages call)
+    React.useEffect(() => {
+        const fetchData = async () => {
+            const response = await getPackages();
+            // console.log('response', response);
+            const data = response.data.map((row: any) => {
+                return { name: row.Name, version: row.Version, id: row.ID };
+            });
+            // console.log('data', data);
+            setRows(data);
+        }
+        fetchData();
+    }, []);
+
+    // any time rows changes, filter rows
+    React.useEffect(() => {
+        filterRows(rows, '');
+    }, [rows]);
+
+    const handleRowSelect = async (row: any) => {
+        // get package details from database
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const response = await getPackageRating(row.id);
+                const data = {
+                    url: response.data.URL,
+                    net_score: response.data.NetScore,
+                    ramp_up_score: response.data.RampUp,
+                    correctness_score: response.data.Correctness,
+                    bus_factor_score: response.data.BusFactor,
+                    responsive_maintainer_score: response.data.ResponsiveMaintainer,
+                    pinning_fraction: response.data.GoodPinningPractice,
+                    pr_fraction: response.data.PullRequest,
+                    license_score: response.data.LicenseScore,
+                };
+                setSelectedRow({ ...row, ...data });
+                // console.log('selectedRow', { ...row, ...data });
+            } catch (error) {
+                console.log(error);
+            }
+            setLoading(false);
+        }
+        await fetchData();
+    }
+
+    const handleDownload = () => {
+        console.log('download');
+    }
+
+    const handleDelete = () => {
+        console.log('delete');
+    }
+
+    const handleUpdate = () => {
+        console.log('update');
     }
 
     return (
@@ -82,7 +159,123 @@ export default function PackageList() {
                         ),
                     }} />
             </Box>
-            <TableContainer component={Paper} sx={{ maxHeight: 600, overflow: 'auto', border: 1, borderRadius: '0.5em', borderColor: theme.palette.primary.main }}>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <TableContainer component={Paper} sx={{ width: '15.1em', maxHeight: 600, overflow: 'auto', border: 1, borderRadius: '0.5em', borderColor: theme.palette.primary.main }}>
+                    <Table sx={{ width: '15em' }} stickyHeader aria-label="simple table">
+                        <TableHead>
+                            <TableRow >
+                                <TableCell>Package</TableCell>
+                                <TableCell>ID</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {filteredRows.map((row) => (
+                                <TableRow
+                                    selected={selectedRow?.name === row.name}
+                                    onClick={() => handleRowSelect(row)}
+                                    key={row.name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {row.name}
+                                    </TableCell>
+                                    <TableCell>{row.version}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    flexGrow: 1,
+                    marginLeft: '1em',
+                    border: 1,
+                    padding: '0.5em',
+                    borderRadius: '0.5em',
+                    borderColor: theme.palette.primary.main,
+                }} >
+                    <Typography variant="h4">
+                        Package Details
+                    </Typography>
+                    {
+                        selectedRow === null ?
+                            <Typography variant="h6">
+                                Select a package to view details
+                            </Typography> :
+                            <>
+                                <Typography variant="h6">
+                                    {rows.find((row) => row.id === selectedRow.id)?.name} {rows.find((row) => row.id === selectedRow.id)?.version}
+                                </Typography>
+                                <Button variant='contained' sx={{ margin: '0.5em', width: '15em' }}>
+                                    Download
+                                </Button>
+                                <Button variant='contained' color='error' sx={{ margin: '0.5em', width: '15em' }}>
+                                    Delete
+                                </Button>
+                                <TextField
+                                    margin="normal"
+                                    sx={{ width: '20em' }}
+                                    required={true}
+                                    label="Name"
+                                    value={selectedRow?.name}
+                                    onChange={(e) => setSelectedRow({ ...selectedRow, name: e.target.value })}
+                                />
+                                <TextField
+                                    margin="normal"
+                                    sx={{ width: '20em' }}
+                                    required={true}
+                                    label="Version"
+                                    value={selectedRow?.version}
+                                    onChange={(e) => setSelectedRow({ ...selectedRow, version: e.target.value })}
+                                />
+                                <TextField
+                                    margin="normal"
+                                    sx={{ width: '20em' }}
+                                    required={true}
+                                    label="URL"
+                                    value={selectedRow?.url}
+                                    onChange={(e) => setSelectedRow({ ...selectedRow, url: e.target.value })}
+                                />
+                                <Button variant='contained' sx={{ margin: '0.5em', width: '15em' }}>
+                                    Update
+                                </Button>
+                                <Typography variant='h6'>
+                                    Scores
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Net Score: {selectedRow?.net_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Ramp Up Score: {selectedRow?.ramp_up_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Correctness Score: {selectedRow?.correctness_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Bus Factor Score: {selectedRow?.bus_factor_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Responsive Maintainer Score: {selectedRow?.responsive_maintainer_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Pinning Fraction: {selectedRow?.pinning_fraction?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    PR Fraction: {selectedRow?.pr_fraction?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    License Score: {selectedRow?.license_score?.toFixed(1)}
+                                </Typography>
+                            </>
+                    }
+                </Box>
+            </Box>
+            {/* <TableContainer component={Paper} sx={{ maxHeight: 600, overflow: 'auto', border: 1, borderRadius: '0.5em', borderColor: theme.palette.primary.main }}>
                 <Table sx={{ minWidth: 650 }} stickyHeader aria-label="simple table">
                     <TableHead>
                         <TableRow >
@@ -122,7 +315,7 @@ export default function PackageList() {
                         ))}
                     </TableBody>
                 </Table>
-            </TableContainer>
+            </TableContainer> */}
         </Box>
 
     );
