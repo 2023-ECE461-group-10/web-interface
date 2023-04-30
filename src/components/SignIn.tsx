@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { authenticate } from '../api/apiCalls';
 import { Backdrop } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import theme from '../theme';
 
 // takes isSignedIn, setIsSignedIn props
 const SignIn = ({ setIsSignedIn, handleClose }: any): JSX.Element => {

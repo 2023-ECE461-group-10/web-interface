@@ -8,8 +8,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Box, TextField, InputAdornment, Typography, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { getPackages } from '../api/apiCalls';
+import { getPackages, getPackageRating, downloadPackage, deletePackage } from '../api/apiCalls';
 import theme from '../theme';
+import { Backdrop } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // URL NET_SCORE RAMP_UP_SCORE CORRECTNESS_SCORE BUS_FACTOR_SCORE RESPONSIVE_MAINTAINER_SCORE PINNING_FRACTION PR_FRACTION LICENSE_SCORE
 
@@ -58,7 +60,22 @@ const rows = [
 export default function PackageList() {
     const [rows, setRows] = React.useState<any[]>([]);
     const [filteredRows, setFilteredRows] = React.useState<any[]>(rows);
-    const [selectedRow, setSelectedRow] = React.useState<{ name: string, id: number, version: string } | null>(null);
+    const [selectedRow, setSelectedRow] = React.useState<{
+        name: string,
+        id: number,
+        version: string,
+        url?: string,
+        net_score?: number,
+        ramp_up_score?: number,
+        correctness_score?: number,
+        bus_factor_score?: number,
+        responsive_maintainer_score?: number,
+        pinning_fraction?: number,
+        pr_fraction?: number,
+        license_score?: number,
+    } | null>(null);
+
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     const filterRows = (rows: any, filter: string) => {
         const filteredRows = rows.filter((row: any) => row.name.toLowerCase().includes(filter.toLowerCase()));
@@ -69,16 +86,59 @@ export default function PackageList() {
     React.useEffect(() => {
         const fetchData = async () => {
             const response = await getPackages();
-            console.log('response', response);
+            // console.log('response', response);
             const data = response.data.map((row: any) => {
                 return { name: row.Name, version: row.Version, id: row.ID };
             });
-            console.log('data', data);
+            // console.log('data', data);
             setRows(data);
-            setFilteredRows(rows);
         }
         fetchData();
     }, []);
+
+    // any time rows changes, filter rows
+    React.useEffect(() => {
+        filterRows(rows, '');
+    }, [rows]);
+
+    const handleRowSelect = async (row: any) => {
+        // get package details from database
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const response = await getPackageRating(row.id);
+                const data = {
+                    url: response.data.URL,
+                    net_score: response.data.NetScore,
+                    ramp_up_score: response.data.RampUp,
+                    correctness_score: response.data.Correctness,
+                    bus_factor_score: response.data.BusFactor,
+                    responsive_maintainer_score: response.data.ResponsiveMaintainer,
+                    pinning_fraction: response.data.GoodPinningPractice,
+                    pr_fraction: response.data.PullRequest,
+                    license_score: response.data.LicenseScore,
+                };
+                setSelectedRow({ ...row, ...data });
+                // console.log('selectedRow', { ...row, ...data });
+            } catch (error) {
+                console.log(error);
+            }
+            setLoading(false);
+        }
+        await fetchData();
+    }
+
+    const handleDownload = () => {
+        console.log('download');
+    }
+
+    const handleDelete = () => {
+        console.log('delete');
+    }
+
+    const handleUpdate = () => {
+        console.log('update');
+    }
 
     return (
         <Box sx={{ padding: '1em', margin: '1em' }}>
@@ -99,6 +159,9 @@ export default function PackageList() {
                         ),
                     }} />
             </Box>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <TableContainer component={Paper} sx={{ width: '15.1em', maxHeight: 600, overflow: 'auto', border: 1, borderRadius: '0.5em', borderColor: theme.palette.primary.main }}>
                     <Table sx={{ width: '15em' }} stickyHeader aria-label="simple table">
@@ -112,7 +175,7 @@ export default function PackageList() {
                             {filteredRows.map((row) => (
                                 <TableRow
                                     selected={selectedRow?.name === row.name}
-                                    onClick={() => setSelectedRow(row)}
+                                    onClick={() => handleRowSelect(row)}
                                     key={row.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}
                                 >
@@ -128,6 +191,7 @@ export default function PackageList() {
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
+                    alignItems: 'center',
                     flexGrow: 1,
                     marginLeft: '1em',
                     border: 1,
@@ -135,43 +199,78 @@ export default function PackageList() {
                     borderRadius: '0.5em',
                     borderColor: theme.palette.primary.main,
                 }} >
-                    <Typography variant="h4" sx={{ alignSelf: 'center' }}>
+                    <Typography variant="h4">
                         Package Details
                     </Typography>
                     {
                         selectedRow === null ?
-                            <Typography variant="h6" sx={{ alignSelf: 'center' }}>
+                            <Typography variant="h6">
                                 Select a package to view details
                             </Typography> :
                             <>
-                                <Typography variant="h6" sx={{ alignSelf: 'center' }}>
-                                    {selectedRow?.name} {selectedRow?.version}
+                                <Typography variant="h6">
+                                    {rows.find((row) => row.id === selectedRow.id)?.name} {rows.find((row) => row.id === selectedRow.id)?.version}
                                 </Typography>
+                                <Button variant='contained' sx={{ margin: '0.5em', width: '15em' }}>
+                                    Download
+                                </Button>
+                                <Button variant='contained' color='error' sx={{ margin: '0.5em', width: '15em' }}>
+                                    Delete
+                                </Button>
                                 <TextField
                                     margin="normal"
                                     sx={{ width: '20em' }}
-                                    id="name"
+                                    required={true}
                                     label="Name"
-                                    defaultValue={selectedRow?.name}
-                                    autoComplete='username'
-                                    autoFocus
+                                    value={selectedRow?.name}
+                                    onChange={(e) => setSelectedRow({ ...selectedRow, name: e.target.value })}
                                 />
                                 <TextField
                                     margin="normal"
+                                    sx={{ width: '20em' }}
                                     required={true}
-                                    fullWidth={true}
-                                    id="username"
-                                    label="Username"
-                                    name="username"
-                                    autoComplete='username'
-                                    autoFocus
+                                    label="Version"
+                                    value={selectedRow?.version}
+                                    onChange={(e) => setSelectedRow({ ...selectedRow, version: e.target.value })}
                                 />
-                                <Button variant='contained' sx={{ width: '20em' }}>
-                                    Download
+                                <TextField
+                                    margin="normal"
+                                    sx={{ width: '20em' }}
+                                    required={true}
+                                    label="URL"
+                                    value={selectedRow?.url}
+                                    onChange={(e) => setSelectedRow({ ...selectedRow, url: e.target.value })}
+                                />
+                                <Button variant='contained' sx={{ margin: '0.5em', width: '15em' }}>
+                                    Update
                                 </Button>
-                                <Button variant='contained' color='error' sx={{ width: '20em' }}>
-                                    Delete
-                                </Button>
+                                <Typography variant='h6'>
+                                    Scores
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Net Score: {selectedRow?.net_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Ramp Up Score: {selectedRow?.ramp_up_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Correctness Score: {selectedRow?.correctness_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Bus Factor Score: {selectedRow?.bus_factor_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Responsive Maintainer Score: {selectedRow?.responsive_maintainer_score?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Pinning Fraction: {selectedRow?.pinning_fraction?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    PR Fraction: {selectedRow?.pr_fraction?.toFixed(1)}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    License Score: {selectedRow?.license_score?.toFixed(1)}
+                                </Typography>
                             </>
                     }
                 </Box>

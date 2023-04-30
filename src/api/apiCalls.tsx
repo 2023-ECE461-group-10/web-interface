@@ -69,11 +69,14 @@ export const downloadPackage = async (fileId: string) => {
     });
 }
 
-//post request for package rating
-export const ratePackage = async (packageId: string, rating: number) => {
-    return await axios.post(`/api/v1/packages/${packageId}/rating`, {
-        rating,
-    });
+//get request for package rating
+export const getPackageRating = async (packageId: string) => {
+    const config = {
+        headers: {
+            'X-Authorization': localStorage.getItem('token'),
+        }
+    };
+    return await axios.get(`/package/${packageId}/rate`, config);
 }
 
 //get request for all packages, with X-Authorization header
