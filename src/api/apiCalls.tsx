@@ -17,10 +17,9 @@ export const authenticate = async (username: string, password: string) => {
 
 
 //post request for file upload
-export const uploadFile = async (file: File, packageName: string) => {
+export const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('packageName', packageName);
     return await axios.post('/api/v1/files', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
@@ -29,11 +28,15 @@ export const uploadFile = async (file: File, packageName: string) => {
 };
 
 //post request for url upload
-export const uploadUrl = async (url: string, packageName: string) => {
-    return await axios.post('/api/v1/files', {
-        url,
-        packageName,
-    });
+export const uploadUrl = async (url: string) => {
+    const body = JSON.stringify({ URL: url });
+    const config = {
+        headers: {
+            'X-Authorization': localStorage.getItem('token'),
+            'Content-Type': 'application/json',
+        },
+    };
+    return await axios.post('/package', body, config);
 };
 
 

@@ -13,7 +13,6 @@ import theme from '../theme';
 import { Backdrop } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from 'material-ui-snackbar-provider'
-import { Buffer } from 'buffer';
 
 export default function PackageList() {
     const [rows, setRows] = React.useState<any[]>([]);
