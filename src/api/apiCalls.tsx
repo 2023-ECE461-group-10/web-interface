@@ -18,13 +18,21 @@ export const authenticate = async (username: string, password: string) => {
 
 //post request for file upload
 export const uploadFile = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    return await axios.post('/api/v1/files', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
+
+    // convert file to base64 string
+    const base64String = file && await file.arrayBuffer().then((buffer) => {
+        const bytes = new Uint8Array(buffer);
+        return btoa(bytes.reduce((data, byte) => data + String.fromCharCode(byte), ''));
     });
+
+    const body = JSON.stringify({ Content: base64String });
+    const config = {
+        headers: {
+            'X-Authorization': localStorage.getItem('token'),
+            'Content-Type': 'application/json',
+        },
+    };
+    return await axios.post('/package', body, config);
 };
 
 //post request for url upload
