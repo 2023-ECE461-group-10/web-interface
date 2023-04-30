@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 axios.defaults.baseURL = 'https://rest-api-ecoc6k2tbq-uc.a.run.app';
-// below is to deal with cors
 
 // put request for authentication
 export const authenticate = async (username: string, password: string) => {
@@ -37,44 +36,48 @@ export const uploadUrl = async (url: string, packageName: string) => {
     });
 };
 
-//put request for file updating
-export const updateFile = async (file: File, packageName: string) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('packageName', packageName);
-    return await axios.put('/api/v1/files', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
+
+//put request for package update
+export const updatePackage = async (packageName: string, version: string, id: number, url: string,) => {
+    const body = JSON.stringify({
+        metadata: {
+            Name: packageName,
+            Version: version,
+            ID: id.toString(),
+        },
+        data: {
+            URL: url,
         },
     });
+    const config = {
+        headers: {
+            'X-Authorization': localStorage.getItem('token'),
+            'Content-Type': 'application/json',
+        }
+    };
+    return await axios.put(`/package/${id}`, body, config);
 };
 
-//put request for url updating
-export const updateUrl = async (url: string, packageName: string) => {
-    return await axios.put('/api/v1/files', {
-        url,
-        packageName,
-    });
-};
-
-//delete request for package deletion
-export const deletePackage = async (fileId: string) => {
-    return await axios.delete(`/api/v1/files/${fileId}`);
-}
 
 //get request for package download
-export const downloadPackage = async (fileId: string) => {
-    return await axios.get(`/api/v1/files/${fileId}`, {
-        responseType: 'blob',
-    });
+export const downloadPackage = async (id: number) => {
+    const config = {
+        headers: { 'X-Authorization': localStorage.getItem('token') },
+    };
+    return await axios.get(`/package/${id}`, config);
+}
+//delete request for package deletion
+export const deletePackage = async (id: number) => {
+    const config = {
+        headers: { 'X-Authorization': localStorage.getItem('token') },
+    };
+    return await axios.delete(`/package/${id}`, config);
 }
 
 //get request for package rating
 export const getPackageRating = async (packageId: string) => {
     const config = {
-        headers: {
-            'X-Authorization': localStorage.getItem('token'),
-        }
+        headers: { 'X-Authorization': localStorage.getItem('token') }
     };
     return await axios.get(`/package/${packageId}/rate`, config);
 }
