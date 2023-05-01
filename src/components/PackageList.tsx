@@ -126,8 +126,8 @@ export default function PackageList() {
                 } else {
                     snackbar.showMessage('Download Error');
                 }
-                setLoading(false);
             }
+            setLoading(false);
         }
         fetchData();
     }
